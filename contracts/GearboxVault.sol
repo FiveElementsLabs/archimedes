@@ -36,9 +36,10 @@ contract GearboxVault is ERC4626 {
     ///@param assets amount of assets
     ///@param shares amount of shares
     function beforeWithdraw(uint256 assets, uint256 shares) internal override {
-        require(true);
+        require(true); //timelock
         // get how much yearn token we have
         //yearnAdapter.withdraw((tokens * shares) / totalShares);
+        asset.safeTransfer(msg.sender, convertToAssets(shares));
     }
 
     ///@notice do something after withdrawing
@@ -46,19 +47,6 @@ contract GearboxVault is ERC4626 {
     ///@param shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         creditManagerUSDC.addCollateral(address(this), address(asset), assets);
-        /* function addCollateral(
-        address onBehalfOf,
-        address token,
-        uint256 amount
-        ) external override; */
-
-        // Simple strategy 1: Buy gUSDC with USDC
-        // (We will get USDC to be deployed to this strategy)
-        // Here are the steps:
-        // 1. add collateral to vault credit account
-        // 2. increase borrowed amount
-        // 3. deposit to yearn vault
-
         creditManagerUSDC.increaseBorrowedAmount(9 * assets);
         yearnAdapter.deposit(10 * assets);
     }
