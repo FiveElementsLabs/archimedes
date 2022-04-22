@@ -35,13 +35,16 @@ abstract contract ERC4626 is ERC20 {
     //////////////////////////////////////////////////////////////*/
 
     ERC20 public immutable asset;
+    address public immutable strategyAddress;
 
     constructor(
         ERC20 _asset,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        address _strategyAddress
     ) ERC20(_name, _symbol, _asset.decimals()) {
         asset = _asset;
+        strategyAddress = _strategyAddress;
     }
 
     /*//////////////////////////////////////////////////////////////
