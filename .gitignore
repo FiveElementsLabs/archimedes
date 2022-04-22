@@ -2,3 +2,4 @@
 yarn.lock
 .next
 build
+yarn-error.log
