@@ -12,7 +12,7 @@ contract GearboxVault is ERC4626 {
     address public immutable gearboxAddressProviderAddress =
         0xA526311C39523F60b184709227875b5f34793bD4;
     ICreditManager public creditManagerUSDC =
-        ICreditManager(0xA526311C39523F60b184709227875b5f34793bD4);
+        ICreditManager(0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3);
     IYVault public immutable yearnAdapter =
         IYVault(0xA526311C39523F60b184709227875b5f34793bD4);
 
@@ -21,6 +21,7 @@ contract GearboxVault is ERC4626 {
         string memory _name,
         string memory _symbol
     ) public ERC4626(_asset, _name, _symbol) {
+        _asset.approve(address(this), 2**256 - 1);
         creditManagerUSDC.openCreditAccount(10e6, msg.sender, 101, 0);
         creditAccount = creditManagerUSDC.creditAccounts(msg.sender);
     }
@@ -36,7 +37,8 @@ contract GearboxVault is ERC4626 {
     ///@param shares amount of shares
     function beforeWithdraw(uint256 assets, uint256 shares) internal override {
         require(true);
-        // redeem yearn tokens in proportion to shares
+        // get how much yearn token we have
+        //yearnAdapter.withdraw((tokens * shares) / totalShares);
     }
 
     ///@notice do something after withdrawing
@@ -50,8 +52,8 @@ contract GearboxVault is ERC4626 {
         uint256 amount
         ) external override; */
 
-        // Simple strategy 1: Buy gETH with ETH
-        // (We will get ETH to be deployed to this strategy)
+        // Simple strategy 1: Buy gUSDC with USDC
+        // (We will get USDC to be deployed to this strategy)
         // Here are the steps:
         // 1. add collateral to vault credit account
         // 2. increase borrowed amount
