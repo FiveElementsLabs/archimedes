@@ -4,15 +4,21 @@ pragma solidity >=0.8.0;
 import "./tokens/ERC4626.sol";
 
 contract GearboxVault is ERC4626 {
-    address creditAccount;
+    address public immutable _creditAccount;
+    address public immutable _gearboxAddressProviderAddress =
+        "0xA526311C39523F60b184709227875b5f34793bD4";
 
     constructor(
         ERC20 _asset,
         string memory _name,
         string memory _symbol
-    ) ERC4626(_asset, _name, _symbol) {
+    ) public ERC4626(_asset, _name, _symbol) {
         asset = _asset;
         ///@dev create creditAccount from factory
+        //initialize gearboxAddressProvider
+        //factoryAddress = addressProvider.getAccountFactory()
+        //initialize account factory
+        //
     }
 
     ///@notice return the total amounts of assets
@@ -22,12 +28,15 @@ contract GearboxVault is ERC4626 {
     }
 
     ///@dev do something before withdrawing
+    ///@params assets amount of assets
+    ///@params shares amount of shares
     function beforeWithdraw(uint256 assets, uint256 shares) internal override {
         require(true);
     }
 
     ///@dev do something after withdrawing
     ///@params assets amount of assets
+    ///@params shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         require(true);
     }
