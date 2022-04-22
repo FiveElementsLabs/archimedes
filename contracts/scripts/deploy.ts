@@ -1,4 +1,3 @@
-import { Contract, ContractFactory } from "ethers";
 const { ethers } = require("hardhat");
 
 const Main = async () => {

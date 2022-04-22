@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Gearbox Protocol. Generalized leverage for DeFi protocols
 // (c) Gearbox Holdings, 2021
-pragma solidity ^0.7.4;
+pragma solidity >=0.8.0;
 pragma abicoder v2;
 
-import {DataTypes} from "../../libraries/data/Types.sol";
+import "../../libraries/data/Types.sol";
 
 /// @title Optimised for front-end credit Manager interface
 /// @notice It's optimised for light-weight abi
