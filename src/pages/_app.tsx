@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
     <ChakraProvider>
       <SharedStateProvider>
         <Head>
-          <title>React App</title>
+          <title>Archimedes</title>
         </Head>
         <Component {...pageProps} />
       </SharedStateProvider>

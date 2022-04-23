@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -15,7 +15,9 @@ import {
   Coins,
   ChartLineUp,
   CurrencyCircleDollar,
-  XCircle,
+  ArrowRight,
+  Gear,
+  ShieldCheck,
 } from "phosphor-react";
 
 import { useStrategyUSDC } from "../../hooks/useStrategyUSDC";
@@ -23,7 +25,7 @@ import Layout from "../../components/layout";
 import strategies from "../../lib/strategies";
 
 const Strategy = () => {
-  const { deposit, withdraw } = useStrategyUSDC();
+  const { deposit, withdraw, balanceOf } = useStrategyUSDC();
   const [amountUsdc, setAmountUsdc] = useState(0);
   const router = useRouter();
   const { id } = router.query;
@@ -32,7 +34,10 @@ const Strategy = () => {
 
   const cardBg = useColorModeValue("gray.200", "gray.700");
   const cardBg2 = useColorModeValue("gray.300", "gray.600");
-  const buttonBg = useColorModeValue("#388d9e", "#0a4faf");
+  const buttonBg = useColorModeValue(
+    "#388d9e",
+    "linear(to-r, #1a81bd, #202ec2)"
+  );
   const iconsBg = useColorModeValue("#04346f", "#4083e0");
   const card1Shadow = useColorModeValue(
     "0 0 0 3px rgba(117, 69, 211, 0.6)",
@@ -42,6 +47,16 @@ const Strategy = () => {
     "0 0 0 3px rgba(106, 49, 221, 0.6)",
     "0 0 0 3px rgba(68, 124, 220, 0.6)"
   );
+  const [Tvl, setTvl] = useState(0);
+
+  useEffect(() => {
+    const getBalance = async () => {
+      const balance = await balanceOf();
+      setTvl(balance);
+    };
+
+    getBalance();
+  }, []);
 
   return (
     <Layout>
@@ -54,11 +69,34 @@ const Strategy = () => {
           >
             <Flex flexDirection="column">
               <Box>
-                <Badge fontSize="lg" colorScheme="cyan">
-                  {strat.desc} Strategy
-                </Badge>
+                <Flex gap="0.6rem">
+                  <Badge
+                    display="flex"
+                    alignItems="center"
+                    fontSize="lg"
+                    colorScheme="blue"
+                  >
+                    <Gear size={25} />
+                    <Text ml={1}>{strat.desc} Strategy</Text>
+                  </Badge>
+                  <Badge
+                    display="flex"
+                    alignItems="center"
+                    fontSize="lg"
+                    colorScheme="green"
+                  >
+                    <ShieldCheck size={25} />
+                    <Text ml={1}> liquidation protected</Text>
+                  </Badge>
+                </Flex>
               </Box>
-              <Heading mt={2} fontSize="4xl" fontWeight="700">
+              <Heading
+                mt={2}
+                fontSize="5xl"
+                fontWeight="700"
+                bgGradient="linear(to-l, #5e63ef, #7f00bf)"
+                bgClip="text"
+              >
                 {strat.name}
               </Heading>
               <Text mt={3} fontSize="lg" opacity={0.8}>
@@ -116,7 +154,7 @@ const Strategy = () => {
                       TVL
                     </Text>
                     <Heading mb={5} fontSize="xl">
-                      ${strat.tvl}k
+                      <Box>${Tvl}k</Box>
                     </Heading>
                   </Flex>
                 </Box>
@@ -194,7 +232,7 @@ const Strategy = () => {
               <Button
                 mt={3}
                 w="full"
-                backgroundColor={buttonBg}
+                bgGradient={buttonBg}
                 onClick={() => deposit((amountUsdc * 1e6).toString())}
               >
                 Deposit
@@ -223,10 +261,14 @@ const Strategy = () => {
                   Shares: <b>24.5</b> of <b>1240.2</b>
                 </Text>
               </Flex>
-              <Button colorScheme="blue" onClick={() => withdraw()}>
+              <Button
+                px={5}
+                bgGradient="linear(to-r, yellow.600, red.500)"
+                onClick={() => withdraw()}
+              >
                 Withdraw
                 <Box ml={2}>
-                  <XCircle size={24} />
+                  <ArrowRight size={24} />
                 </Box>
               </Button>
             </Flex>
