@@ -62,8 +62,6 @@ contract LeverageUSDCVault is ERC4626 {
     ///@param shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         ///@dev open credit manager if it does not exist
-        console.log("inside deposit");
-        console.log(address(creditAccount));
         //asset.approve(owner, assets*entryFee/10000);
         //asset.safeTransferFrom(address(this), owner, assets*entryFee/10000);
         asset.approve(address(creditManagerUSDC), 2**256 - 1);
@@ -77,7 +75,6 @@ contract LeverageUSDCVault is ERC4626 {
                 (levFactor * assets) / 100
             );
         }
-        console.log(address(creditAccount));
         yearnAdapter.deposit();
     }
 
