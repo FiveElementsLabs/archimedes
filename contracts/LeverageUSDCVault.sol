@@ -82,7 +82,6 @@ contract LeverageUSDCVault is ERC4626 {
         }
         console.log(address(creditAccount));
         yearnAdapter.deposit();
-        console.log("after yearn");
     }
 
     ///@notice create open credit account if it doesnt exist and do nothing if it exists
@@ -102,12 +101,8 @@ contract LeverageUSDCVault is ERC4626 {
 
     //Health factor computation
     function _getHealthFactor() internal view returns (uint256) {
-        ICreditFilter creditFilter = ICreditFilter(
-            creditManagerUSDC.creditFilter()
-        );
-        uint256 healthFactor = creditFilter.calcCreditAccountHealthFactor(
-            address(creditFilter)
-        );
+        return
+            creditFilter.calcCreditAccountHealthFactor(address(creditAccount));
     }
 
     // Close position and reopen with lower leverage
