@@ -84,8 +84,8 @@ describe("GearboxVault Deployment", function () {
     );
     vault = await GearboxVaultFactory.deploy(
       usdcMock.address,
-      "GearboxVault",
-      "GBV"
+      "USD Coin",
+      "USDC"
     );
     await vault.deployed();
 

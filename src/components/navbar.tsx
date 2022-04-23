@@ -7,8 +7,8 @@ import Connect from "./connect";
 export default function Navbar() {
   return (
     <Flex justifyContent="space-between" alignItems="center" height={16}>
-      <Box className="navbar-brand">
-        <Link href="/">
+      <Box cursor="pointer">
+        <Link href="/" passHref>
           <Coins size={32} />
         </Link>
       </Box>

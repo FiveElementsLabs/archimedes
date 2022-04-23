@@ -7,7 +7,7 @@ import "./interfaces/IYVault.sol";
 import "./interfaces/ICreditFilter.sol";
 import "hardhat/console.sol";
 
-contract LeverageUSDCVault is ERC4626 {
+contract HedgedOptionVault is ERC4626 {
     ///@dev credit account associated with Vault
     address public creditAccount = address(0);
     ICreditManager public creditManagerUSDC =
@@ -39,7 +39,7 @@ contract LeverageUSDCVault is ERC4626 {
         yearnBalance -= yearnAdapter.withdraw(yearnBalance, address(this));
         creditManagerUSDC.repayCreditAccount(address(this));
         //redeposit
-        afterDeposit(asset.balanceOf(address(this)) - assets, shares);
+        _getCreditAccount(asset.balanceOf(address(this)) - assets);
     }
 
     ///@notice do something after withdrawing
@@ -58,13 +58,10 @@ contract LeverageUSDCVault is ERC4626 {
             creditManagerUSDC.increaseBorrowedAmount(4 * assets);
             console.log("after increase borrowd");
         }
-        console.log(yearnAdapter.token());
-        console.log(creditFilter.isTokenAllowed(yearnAdapter.token()));
+        console.log(yearnAdapter.yVault());
+        console.log(creditFilter.isTokenAllowed(yearnAdapter.yVault()));
         console.log("pre deposit yearn");
-        yearnBalance += yearnAdapter.deposit(
-            10,
-            0x3B55a47d6ffE0b7bb1762109faFa5B84180c1111
-        );
+        yearnBalance += yearnAdapter.deposit();
         console.log("deposited to yearn");
     }
 
