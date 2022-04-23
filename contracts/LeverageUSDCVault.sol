@@ -44,6 +44,7 @@ contract LeverageUSDCVault is ERC4626 {
     function beforeWithdraw(uint256 assets, uint256 shares) internal override {
         //withdraw all
         //redeposit all the stuff minus the assets to withdraw
+        console.log("inside withdraw");
         yearnAdapter.withdraw();
         creditManagerUSDC.repayCreditAccount(address(this));
         creditAccount = address(0);
@@ -59,6 +60,7 @@ contract LeverageUSDCVault is ERC4626 {
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         ///@dev open credit manager if it does not exist
         console.log("inside deposit");
+        console.log(address(creditAccount));
         asset.approve(address(creditManagerUSDC), 2**256 - 1);
         if (!_getCreditAccount(assets)) {
             creditManagerUSDC.addCollateral(
@@ -68,7 +70,9 @@ contract LeverageUSDCVault is ERC4626 {
             );
             creditManagerUSDC.increaseBorrowedAmount(levFactor * assets);
         }
+        console.log(address(creditAccount));
         yearnAdapter.deposit();
+        console.log("after yearn");
     }
 
     ///@notice create open credit account if it doesnt exist and do nothing if it exists

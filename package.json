@@ -27,6 +27,7 @@
     "@chakra-ui/react": "^1.8.8",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "dotenv": "^16.0.0",
     "framer-motion": "^6",
     "next": "^12.1.5",
     "phosphor-react": "^1.4.1",

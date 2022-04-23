@@ -10,7 +10,12 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { Coins, ChartLineUp, CurrencyCircleDollar, Swap } from "phosphor-react";
+import {
+  Coins,
+  ChartLineUp,
+  CurrencyCircleDollar,
+  XCircle,
+} from "phosphor-react";
 import Layout from "../../components/layout";
 import strategies from "../../lib/strategies";
 
@@ -160,7 +165,7 @@ const Strategy = () => {
                 <Avatar
                   position="absolute"
                   top="1rem"
-                  right="1rem"
+                  right="1.5rem"
                   mt={3}
                   size={"lg"}
                   src={strat.imgSrc}
@@ -185,19 +190,40 @@ const Strategy = () => {
             </Box>
           </Flex>
 
-          <Box mt={5} bgColor={cardBg} rounded="lg" p={4}>
-            <Heading mb={3} fontSize="2xl">
+          <Box mt={6} bgColor={cardBg} rounded="lg" p={4}>
+            <Heading mb={4} fontSize="2xl">
               Your Position
             </Heading>
-            <Flex p={4} flexDir="row" w="full" bgColor={cardBg2} rounded="lg">
-              <Avatar src={strat.imgSrc} />
+            <Flex
+              p={4}
+              w="full"
+              justifyContent="space-between"
+              alignItems="center"
+              bgColor={cardBg2}
+              rounded="lg"
+            >
+              <Flex alignItems="center" gap="2rem">
+                <Avatar src={strat.imgSrc} />
+                <Text fontSize="xl" fontWeight="600">
+                  TVL: <b>$10,532.52</b>
+                </Text>
+                <Text fontSize="xl" fontWeight="600">
+                  Shares: <b>24.5</b> of <b>1240.2</b>
+                </Text>
+              </Flex>
+              <Button colorScheme="blue">
+                Withdraw
+                <Box ml={2}>
+                  <XCircle size={24} />
+                </Box>
+              </Button>
             </Flex>
-            <Text>Shares + yUSDC owned, health factor, total borrowed</Text>
+            <Text mt={4}>Pool: health factor, total borrowed</Text>
           </Box>
 
           <Box mt={5} bgColor={cardBg} rounded="lg" p={4}>
             <Heading fontSize="2xl">About this strategy</Heading>
-            <Text>
+            <Text my={2}>
               Imagine we had a very precise description for this strategy. Most
               people would probably not read it anyway
             </Text>

@@ -1,6 +1,7 @@
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
+import "dotenv/config";
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -26,8 +27,9 @@ export default {
     hardhat: {
       forking: {
         enabled: true,
-        url: "https://kovan.infura.io/v3/61a9f83ab0ae4873818b67960409b7fe",
+        url: "https://kovan.infura.io/v3/7c0637a9ffa64d80afa4d4d053bdb5dd",
       },
+      accounts: [process.env.PRIVATE_KEY],
     },
   },
   mocha: {

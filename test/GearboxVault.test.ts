@@ -107,7 +107,6 @@ describe("GearboxVault Deployment", function () {
     await vault.deployed();
 
     ERC4626 = await ethers.getContractAtFromArtifact(ERC20Json, vault.address);
-    console.log(ERC4626);
   });
 
   describe("LeverageVault", function () {
@@ -150,11 +149,7 @@ describe("GearboxVault Deployment", function () {
         .redeem(Math.ceil(shares / 2), user.address, user.address, {
           gasLimit: 3000000,
         });
-      const yusdcMock = await ethers.getContractAtFromArtifact(
-        ERC20Json,
-        "0x748fa28c53a9307bf13ab41164723c133d59fa67"
-      );
-      expect((await yusdcMock.balanceOf(user.address)).toNumber()).to.lt(
+      expect((await ERC4626.balanceOf(user.address)).toNumber()).to.lt(
         amountUsdc
       );
     });
