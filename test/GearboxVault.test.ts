@@ -51,6 +51,8 @@ describe("GearboxVault Deployment", function () {
   let user: any;
   let usdcMock: Contract;
   let vault: Contract;
+  let ERC4626: Contract;
+  let shares: any;
 
   before("Creating all environment", async function () {
     const signers = await ethers.getSigners();
@@ -60,6 +62,11 @@ describe("GearboxVault Deployment", function () {
     usdcMock = await ethers.getContractAtFromArtifact(
       ERC20Json,
       "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df"
+    );
+
+    ERC4626 = await ethers.getContractAtFromArtifact(
+      ERC20Json,
+      "0x748fa28c53a9307bf13ab41164723c133d59fa67"
     );
 
     //mint some token
@@ -96,26 +103,35 @@ describe("GearboxVault Deployment", function () {
 
   describe("LeverageVault", function () {
     it("should create credit account on first use", async function () {
-      const amountUsdc = 200e6;
+      const amountUsdc: any = 200e6;
       await usdcMock.approve(vault.address, amountUsdc);
       await vault.connect(user).deposit(amountUsdc, user.address);
-      const yusdcMock = await ethers.getContractAtFromArtifact(
-        ERC20Json,
-        "0x748fa28c53a9307bf13ab41164723c133d59fa67"
+
+      expect((await ERC4626.balanceOf(user.address)).toString()).to.eq(
+        amountUsdc.toString()
       );
-      expect(await yusdcMock.balanceOf(user.address)).to.eq(amountUsdc);
       //check if vault address is linked to a credit account
     });
 
     it("should add liquidity on second use", async function () {
-      const amountUsdc = 200e6;
+      const amountUsdc: any = 200e6;
       await usdcMock.approve(vault.address, amountUsdc);
       await vault.connect(user).deposit(amountUsdc, user.address);
+      expect((await ERC4626.balanceOf(user.address)).toNumber()).to.gt(
+        amountUsdc
+      );
+    });
+
+    it("should withdraw liquidity", async function () {
+      const amountUsdc: any = 200e6;
+      await usdcMock.approve(vault.address, amountUsdc);
+      const shares = (await ERC4626.balanceOf(user.address)).toNumber();
+      await vault.connect(user).redeem(shares, user.address, user.address);
       const yusdcMock = await ethers.getContractAtFromArtifact(
         ERC20Json,
         "0x748fa28c53a9307bf13ab41164723c133d59fa67"
       );
-      expect(await yusdcMock.balanceOf(user.address).toNumber()).to.gt(
+      expect((await yusdcMock.balanceOf(user.address)).toNumber()).to.lt(
         amountUsdc
       );
     });

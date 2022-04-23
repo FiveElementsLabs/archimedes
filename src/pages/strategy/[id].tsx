@@ -1,14 +1,16 @@
 import {
   Box,
   Flex,
+  Button,
+  Avatar,
   Heading,
   Text,
   Badge,
-  Avatar,
+  Input,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { Coins, ChartLineUp, CurrencyCircleDollar } from "phosphor-react";
+import { Coins, ChartLineUp, CurrencyCircleDollar, Swap } from "phosphor-react";
 import Layout from "../../components/layout";
 import strategies from "../../lib/strategies";
 
@@ -18,7 +20,7 @@ const Strategy = () => {
 
   const strat = strategies[Number(id)] || null;
 
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = useColorModeValue("gray.200", "gray.700");
 
   return (
     <Layout>
@@ -26,7 +28,7 @@ const Strategy = () => {
         <Box display="flex" flexDirection="column">
           <Flex
             flexDirection={{ base: "column", md: "row" }}
-            justifyContent={{ md: "justify-center" }}
+            justifyContent={{ base: "start", md: "space-between" }}
             alignItems={{ base: "center", md: "start" }}
           >
             <Flex flexDirection="column">
@@ -106,8 +108,62 @@ const Strategy = () => {
               </Flex>
             </Flex>
 
-            <Box></Box>
+            <Box
+              position="relative"
+              mt={{ base: "2rem", md: "0" }}
+              bgColor={cardBg}
+              rounded="lg"
+              p={5}
+              w="320px"
+              h="260px"
+            >
+              <Heading fontSize="3xl" fontWeight="700">
+                Deposit
+              </Heading>
+              <Flex mt={2} alignItems="center">
+                <Text opacity={0.9}>
+                  {strat.asset} {strat.leverage}x Leverage
+                </Text>
+                <Avatar
+                  position="absolute"
+                  top="1rem"
+                  right="1rem"
+                  mt={3}
+                  size={"lg"}
+                  src={strat.imgSrc}
+                  css={{
+                    border: "2px solid white",
+                  }}
+                />
+              </Flex>
+              <Flex mt={10}>
+                <Input
+                  roundedTopRight="none"
+                  roundedBottomRight="none"
+                  placeholder="Amount"
+                />
+                <Button roundedTopLeft="none" roundedBottomLeft="none" w="75px">
+                  Max
+                </Button>
+              </Flex>
+              <Button mt={3} w="full">
+                Deposit
+              </Button>
+            </Box>
           </Flex>
+
+          <Box mt={5} bgColor={cardBg} rounded="lg" p={4}>
+            <Heading fontSize="2xl">Your Position</Heading>
+            <Text>Shares + yUSDC owned, health factor, total borrowed</Text>
+          </Box>
+
+          <Box mt={5} bgColor={cardBg} rounded="lg" p={4}>
+            <Heading fontSize="2xl">About this strategy</Heading>
+            <Text>
+              Imagine we had a very precise description for this strategy. Most
+              people would probably not read it anyway
+            </Text>
+          </Box>
         </Box>
       )}
     </Layout>
