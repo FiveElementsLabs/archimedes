@@ -3,7 +3,6 @@ const hre = require("hardhat");
 
 const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
 
-//find the slot in memory of the balance of the tokenAddress and return it
 async function findbalanceSlot(MockToken: any, user: any) {
   const encode = (types: any, values: any) =>
     ethers.utils.defaultAbiCoder.encode(types, values);

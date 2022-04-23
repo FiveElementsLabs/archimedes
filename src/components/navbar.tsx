@@ -1,6 +1,8 @@
-import { Button, Box, Flex } from "@chakra-ui/react";
-import { Coins } from "phosphor-react";
 import Link from "next/link";
+import { Box, Flex } from "@chakra-ui/react";
+import { Coins } from "phosphor-react";
+
+import Connect from "./connect";
 
 export default function Navbar() {
   return (
@@ -11,7 +13,7 @@ export default function Navbar() {
         </Link>
       </Box>
       <Box>
-        <Button>Connect</Button>
+        <Connect />
       </Box>
     </Flex>
   );
