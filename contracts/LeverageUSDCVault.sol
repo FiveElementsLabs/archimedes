@@ -17,9 +17,6 @@ contract LeverageUSDCVault is ERC4626 {
         IYVault(0x7DE5C945692858Cef922DAd3979a1B8bfA77A9B4);
     ICreditFilter public creditFilter =
         ICreditFilter(0x6f706028D7779223a51fA015f876364d7CFDD5ee);
-    ERC20 yvUSDC = ERC20(0x980E4d8A22105c2a2fA2252B7685F32fc7564512);
-    ERC20 USDC = ERC20(0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df);
-    // Leverage Factor
     uint256 public levFactor = 300;
     uint256 public criticalHealthFactor;
 
@@ -65,8 +62,6 @@ contract LeverageUSDCVault is ERC4626 {
     ///@param shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         ///@dev open credit manager if it does not exist
-        console.log("inside deposit");
-        console.log(address(creditAccount));
         //asset.approve(owner, assets*entryFee/10000);
         //asset.safeTransferFrom(address(this), owner, assets*entryFee/10000);
         asset.approve(address(creditManagerUSDC), 2**256 - 1);
@@ -80,9 +75,7 @@ contract LeverageUSDCVault is ERC4626 {
                 (levFactor * assets) / 100
             );
         }
-        console.log(address(creditAccount));
         yearnAdapter.deposit();
-        console.log("after yearn");
     }
 
     ///@notice create open credit account if it doesnt exist and do nothing if it exists
@@ -102,12 +95,8 @@ contract LeverageUSDCVault is ERC4626 {
 
     //Health factor computation
     function _getHealthFactor() internal view returns (uint256) {
-        ICreditFilter creditFilter = ICreditFilter(
-            creditManagerUSDC.creditFilter()
-        );
-        uint256 healthFactor = creditFilter.calcCreditAccountHealthFactor(
-            address(creditFilter)
-        );
+        return
+            creditFilter.calcCreditAccountHealthFactor(address(creditAccount));
     }
 
     // Close position and reopen with lower leverage
