@@ -285,7 +285,7 @@ const Strategy = () => {
                 <Text fontSize="xl" fontWeight="600">
                   Collateral:{" "}
                   <b>
-                    ${Math.trunc(Tvl / (leverage * 1e6)) * (Shares / Supply)}
+                    ${Math.ceil((Tvl / (leverage * 1e6)) * (Shares / Supply))}
                   </b>
                 </Text>
                 <Text fontSize="xl" fontWeight="600">
