@@ -1,13 +1,19 @@
-import { ethers } from "ethers";
-import { Contract, ContractFactory } from "ethers";
+import { ethers, Contract } from "ethers";
 
 import { useSharedState } from "../lib/store";
 
-import ARCHIMEDES_VAULT_ABI from "../../artifacts/contracts/LeverageUSDCVault.sol/LeverageUSDCVault.json";
+// ABI
 const ERC20_ABI = require("@openzeppelin/contracts/build/contracts/ERC20.json");
+const ARCHIMEDES_VAULT_ABI = require("../abi/ArchimedesUSDCVault.json");
+const CREDIT_MANAGER_USDC_ABI = require("../abi/CreditManager.json");
+const CREDIT_FILTER_USDC_ABI = require("../abi/CreditFilterUSDC.json");
 
+// ADDRESSES
 const ARCHIMEDES_VAULT_ADDRESS = "0x3aDd51E923D44c70CdF56551b56404209765cbaA";
-const YVUSDC_ADDRESS = "0x980E4d8A22105c2a2fA2252B7685F32fc7564512";
+const CREDIT_MANAGER_USDC_ADDRESS =
+  "0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3";
+const CREDIT_FILTER_USDC_ADDRESS = "0x6f706028D7779223a51fA015f876364d7CFDD5ee";
+const USDC_ADDRESS = "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df";
 
 export const useStrategyUSDC = () => {
   const [{ account, provider }] = useSharedState();
@@ -33,7 +39,7 @@ export const useStrategyUSDC = () => {
       signer
     );
     const USDC: Contract = new ethers.Contract(
-      "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df",
+      USDC_ADDRESS,
       ERC20_ABI.abi,
       signer
     );
@@ -48,13 +54,27 @@ export const useStrategyUSDC = () => {
 
   const balanceOf = async () => {
     const signer = await provider.getSigner();
-    const yusdc = new ethers.Contract(YVUSDC_ADDRESS, ERC20_ABI.abi, signer);
 
-    const balance = (
-      await yusdc.balanceOf(ARCHIMEDES_VAULT_ADDRESS)
-    ).toNumber();
-    console.log(`:: Balance ${balance} USDC`);
-    return balance;
+    const creditManagerUSDC = new ethers.Contract(
+      CREDIT_MANAGER_USDC_ADDRESS,
+      CREDIT_MANAGER_USDC_ABI,
+      signer
+    );
+
+    const creditAccountAddress = await creditManagerUSDC.creditAccounts(
+      ARCHIMEDES_VAULT_ADDRESS
+    );
+
+    const creditFilter = new ethers.Contract(
+      CREDIT_FILTER_USDC_ADDRESS,
+      CREDIT_FILTER_USDC_ABI,
+      signer
+    );
+
+    const balance = await creditFilter.calcTotalValue(creditAccountAddress);
+
+    console.log(`${balance} USDC`);
+    return balance.toString();
   };
 
   const totalAssets = async () => {};
@@ -63,7 +83,30 @@ export const useStrategyUSDC = () => {
     //await ERC4626.balanceOf(user.address)
   };
 
-  const healthFactor = async () => {};
+  const healthFactor = async () => {
+    const signer = await provider.getSigner();
 
-  return { deposit, withdraw, balanceOf };
+    const creditManagerUSDC = new ethers.Contract(
+      CREDIT_MANAGER_USDC_ADDRESS,
+      CREDIT_MANAGER_USDC_ABI,
+      signer
+    );
+
+    const creditAccountAddress = await creditManagerUSDC.creditAccounts(
+      ARCHIMEDES_VAULT_ADDRESS
+    );
+
+    const creditFilter = new ethers.Contract(
+      CREDIT_FILTER_USDC_ADDRESS,
+      CREDIT_FILTER_USDC_ABI,
+      signer
+    );
+    console.log(creditAccountAddress);
+    const res = await creditFilter.calcCreditAccountHealthFactor(
+      creditAccountAddress
+    );
+    console.log(`:: ${res} HF`);
+  };
+
+  return { deposit, withdraw, balanceOf, healthFactor };
 };

@@ -72,7 +72,7 @@ const Main = async () => {
 
   console.log(await usdcMock.balanceOf(user.address));
 
-  const GearboxVaultFactory = await ethers.getContractFactory(
+  /* const GearboxVaultFactory = await ethers.getContractFactory(
     "LeverageUSDCVault"
   );
   const vault = await GearboxVaultFactory.deploy(
@@ -83,9 +83,20 @@ const Main = async () => {
   await vault.deployed();
   await usdcMock
     .connect(user)
-    .approve(vault.address, "10000000000000000000000");
+    .approve(vault.address, "10000000000000000000000"); */
 
-  console.log(vault.address);
+  //adapter 0x7DE5C945692858Cef922DAd3979a1B8bfA77A9B4
+  const adap = await ethers.getContractAt(
+    "ERC4626",
+    "0x980E4d8A22105c2a2fA2252B7685F32fc7564512"
+  );
+  const res = await adap.balanceOf(
+    "0x3aDd51E923D44c70CdF56551b56404209765cbaA"
+  );
+
+  console.log(res);
+
+  //console.log(vault.address);
 };
 
 Main();

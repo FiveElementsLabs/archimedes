@@ -17,26 +17,33 @@ import {
   CurrencyCircleDollar,
   ArrowRight,
   Gear,
+  Drop,
   ShieldCheck,
 } from "phosphor-react";
 
+import { useSharedState } from "../../lib/store";
 import { useStrategyUSDC } from "../../hooks/useStrategyUSDC";
 import Layout from "../../components/layout";
 import strategies from "../../lib/strategies";
 
 const Strategy = () => {
-  const { deposit, withdraw, balanceOf } = useStrategyUSDC();
+  const [{ provider }] = useSharedState();
+  const { deposit, withdraw, balanceOf, healthFactor } = useStrategyUSDC();
   const [amountUsdc, setAmountUsdc] = useState(0);
   const router = useRouter();
   const { id } = router.query;
 
   const strat = strategies[Number(id)] || null;
 
-  const cardBg = useColorModeValue("gray.200", "gray.700");
-  const cardBg2 = useColorModeValue("gray.300", "gray.600");
+  const cardBg = useColorModeValue("gray.200", "gray.800");
+  const cardBg2 = useColorModeValue("gray.300", "gray.700");
   const buttonBg = useColorModeValue(
     "#388d9e",
     "linear(to-r, #1a81bd, #202ec2)"
+  );
+  const buttonBgHover = useColorModeValue(
+    "#1795ae",
+    "linear(to-r, #0e80c2, #1420a9)"
   );
   const iconsBg = useColorModeValue("#04346f", "#4083e0");
   const card1Shadow = useColorModeValue(
@@ -48,15 +55,21 @@ const Strategy = () => {
     "0 0 0 3px rgba(68, 124, 220, 0.6)"
   );
   const [Tvl, setTvl] = useState(0);
+  const [HealtFactor, setHealtFactor] = useState(0);
 
   useEffect(() => {
-    const getBalance = async () => {
-      const balance = await balanceOf();
-      setTvl(balance);
+    const getData = async () => {
+      if (provider) {
+        const balance = await balanceOf();
+        setTvl(balance);
+
+        const HF: any = await healthFactor();
+        setHealtFactor(HF);
+      }
     };
 
-    getBalance();
-  }, []);
+    getData();
+  }, [provider]);
 
   return (
     <Layout>
@@ -90,13 +103,7 @@ const Strategy = () => {
                   </Badge>
                 </Flex>
               </Box>
-              <Heading
-                mt={2}
-                fontSize="5xl"
-                fontWeight="700"
-                bgGradient="linear(to-l, #5e63ef, #7f00bf)"
-                bgClip="text"
-              >
+              <Heading mt={2} fontSize="5xl" fontWeight="700" color="gray.100">
                 {strat.name}
               </Heading>
               <Text mt={3} fontSize="lg" opacity={0.8}>
@@ -195,7 +202,7 @@ const Strategy = () => {
               rounded="lg"
               p={5}
               w="350px"
-              h="260px"
+              h="280px"
               boxShadow={card2Shadow}
             >
               <Heading fontSize="3xl" fontWeight="700">
@@ -217,7 +224,7 @@ const Strategy = () => {
                   }}
                 />
               </Flex>
-              <Flex mt={10}>
+              <Flex mt={14}>
                 <Input
                   onChange={(e) => setAmountUsdc(Number(e.target.value))}
                   type="number"
@@ -233,6 +240,7 @@ const Strategy = () => {
                 mt={3}
                 w="full"
                 bgGradient={buttonBg}
+                _hover={{ bgGradient: buttonBgHover }}
                 onClick={() => deposit((amountUsdc * 1e6).toString())}
               >
                 Deposit
@@ -245,6 +253,7 @@ const Strategy = () => {
               Your Position
             </Heading>
             <Flex
+              mb={4}
               p={4}
               w="full"
               justifyContent="space-between"
@@ -255,7 +264,7 @@ const Strategy = () => {
               <Flex alignItems="center" gap="2rem">
                 <Avatar src={strat.imgSrc} />
                 <Text fontSize="xl" fontWeight="600">
-                  TVL: <b>$10,532.52</b>
+                  Collateral: <b>$10,532.52</b>
                 </Text>
                 <Text fontSize="xl" fontWeight="600">
                   Shares: <b>24.5</b> of <b>1240.2</b>
@@ -264,6 +273,7 @@ const Strategy = () => {
               <Button
                 px={5}
                 bgGradient="linear(to-r, yellow.600, red.500)"
+                _hover={{ bgGradient: "linear(to-r, yellow.700, red.600)" }}
                 onClick={() => withdraw()}
               >
                 Withdraw
@@ -272,10 +282,42 @@ const Strategy = () => {
                 </Box>
               </Button>
             </Flex>
-            <Text mt={4}>Pool: health factor, total borrowed</Text>
           </Box>
 
-          <Box mt={5} bgColor={cardBg} rounded="lg" p={4}>
+          <Box mt={4} bgColor={cardBg} rounded="lg" p={4}>
+            <Heading mb={4} fontSize="2xl">
+              Pool status
+            </Heading>
+            <Flex
+              mb={4}
+              p={4}
+              w="full"
+              justifyContent="space-between"
+              alignItems="center"
+              bgColor={cardBg2}
+              rounded="lg"
+            >
+              <Flex alignItems="center" gap="2rem">
+                <Box color={iconsBg}>
+                  <Drop size={32} />
+                </Box>
+                <Text display="flex" fontSize="xl" fontWeight="600">
+                  Health Factor:
+                  <span style={{ marginLeft: "8px" }} color="orange.600">
+                    {HealtFactor}
+                  </span>
+                </Text>
+                <Text fontSize="xl" fontWeight="600">
+                  Borrowed value: <b>$2,214,241.04</b>
+                </Text>
+                <Text fontSize="xl" fontWeight="600">
+                  Leverage: <b>10x</b>
+                </Text>
+              </Flex>
+            </Flex>
+          </Box>
+
+          <Box mt={4} bgColor={cardBg} rounded="lg" p={4}>
             <Heading fontSize="2xl">About this strategy</Heading>
             <Text my={2}>
               Imagine we had a very precise description for this strategy. Most
