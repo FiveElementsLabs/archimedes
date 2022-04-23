@@ -48,16 +48,19 @@ contract LeverageUSDCVault is ERC4626 {
     ///@param shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         ///@dev open credit manager if it does not exist
-        asset.approve(address(creditManagerUSDC), assets);
+        asset.approve(address(creditManagerUSDC), 2**256 - 1);
         if (!_getCreditAccount(assets)) {
             creditManagerUSDC.addCollateral(
                 address(this),
                 address(asset),
                 assets
             );
+            console.log("after add collateral");
             creditManagerUSDC.increaseBorrowedAmount(4 * assets);
+            console.log("after increase borrowd");
         }
         yearnBalance += yearnAdapter.deposit(5 * assets);
+        console.log("deposited to yearn");
     }
 
     ///@notice create open credit account if it doesnt exist and do nothing if it exists
@@ -68,9 +71,14 @@ contract LeverageUSDCVault is ERC4626 {
             console.log(creditManagerUSDC.maxLeverageFactor());
             console.log(creditManagerUSDC.minAmount());
             console.log(creditManagerUSDC.maxAmount());
+            console.log("usdc");
+            console.log(creditManagerUSDC.underlyingToken());
+            console.log("dopo");
 
             creditManagerUSDC.openCreditAccount(assets, address(this), 400, 0);
+            console.log("ho creato laccount");
             creditAccount = creditManagerUSDC.creditAccounts(address(this));
+            console.log("get credit account");
             return true;
         } else return false;
     }

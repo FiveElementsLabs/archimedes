@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+const { ethers } = require("hardhat");
 import hre from "hardhat";
 
 import ERC20Json from "@openzeppelin/contracts/build/contracts/ERC20.json";
