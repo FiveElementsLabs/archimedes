@@ -1,4 +1,4 @@
-import { Button, Box, Flex, Container } from "@chakra-ui/react";
+import { Button, Box, Flex } from "@chakra-ui/react";
 import { Coins } from "phosphor-react";
 import Link from "next/link";
 
