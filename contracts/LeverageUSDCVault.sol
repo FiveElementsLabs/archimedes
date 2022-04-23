@@ -44,7 +44,6 @@ contract LeverageUSDCVault is ERC4626 {
     function beforeWithdraw(uint256 assets, uint256 shares) internal override {
         //withdraw all
         //redeposit all the stuff minus the assets to withdraw
-        console.log("inside withdraw");
         yearnAdapter.withdraw();
         creditManagerUSDC.repayCreditAccount(address(this));
         creditAccount = address(0);
@@ -100,12 +99,12 @@ contract LeverageUSDCVault is ERC4626 {
         );
     }
 
-    /* // Close position and reopen with lower leverage
+    // Close position and reopen with lower leverage
     function decreaseLeverage() external onlyOwner {
         //redeposit all the stuff minus the assets to withdraw
         yearnBalance -= yearnAdapter.withdraw(yearnBalance, address(this));
         creditManagerUSDC.repayCreditAccount(address(this));
-    } */
+    }
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only Owner");

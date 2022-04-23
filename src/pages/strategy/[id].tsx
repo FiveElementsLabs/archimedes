@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -16,10 +17,14 @@ import {
   CurrencyCircleDollar,
   XCircle,
 } from "phosphor-react";
+
+import { useStrategyUSDC } from "../../hooks/useStrategyUSDC";
 import Layout from "../../components/layout";
 import strategies from "../../lib/strategies";
 
 const Strategy = () => {
+  const { deposit, withdraw } = useStrategyUSDC();
+  const [amountUsdc, setAmountUsdc] = useState(0);
   const router = useRouter();
   const { id } = router.query;
 
@@ -176,6 +181,8 @@ const Strategy = () => {
               </Flex>
               <Flex mt={10}>
                 <Input
+                  onChange={(e) => setAmountUsdc(Number(e.target.value))}
+                  type="number"
                   roundedTopRight="none"
                   roundedBottomRight="none"
                   placeholder="Amount"
@@ -184,7 +191,12 @@ const Strategy = () => {
                   Max
                 </Button>
               </Flex>
-              <Button mt={3} w="full" backgroundColor={buttonBg}>
+              <Button
+                mt={3}
+                w="full"
+                backgroundColor={buttonBg}
+                onClick={() => deposit((amountUsdc * 1e6).toString())}
+              >
                 Deposit
               </Button>
             </Box>

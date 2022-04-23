@@ -27,9 +27,14 @@ export default {
     hardhat: {
       forking: {
         enabled: true,
-        url: "https://kovan.infura.io/v3/7c0637a9ffa64d80afa4d4d053bdb5dd",
+        url: process.env.ALCHEMY_KOVAN_URL,
       },
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [
+        {
+          privateKey: process.env.PRIVATE_KEY,
+          balance: "1000000000000000000000",
+        },
+      ],
     },
   },
   mocha: {

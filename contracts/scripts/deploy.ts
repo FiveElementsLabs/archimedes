@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 import hre from "hardhat";
 
-import ERC20Json from "@openzeppelin/contracts/build/contracts/ERC20.json";
+const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
 
 async function findbalanceSlot(MockToken: any, user: any) {
   const encode = (types: any, values: any) =>
@@ -54,7 +54,6 @@ const Main = async () => {
   );
 
   //mint some token
-
   const slot = await findbalanceSlot(usdcMock, user);
 
   const encode = (types: any, values: any) =>
@@ -73,13 +72,20 @@ const Main = async () => {
 
   console.log(await usdcMock.balanceOf(user.address));
 
-  const SmartVaultFactory = await ethers.getContractFactory("GearboxVault");
-  const SmartVault = await SmartVaultFactory.deploy(
-    "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df",
+  const GearboxVaultFactory = await ethers.getContractFactory(
+    "LeverageUSDCVault"
+  );
+  const vault = await GearboxVaultFactory.deploy(
+    usdcMock.address,
     "USD Coin",
     "USDC"
   );
-  await SmartVault.deployed();
+  await vault.deployed();
+  await usdcMock
+    .connect(user)
+    .approve(vault.address, "10000000000000000000000");
+
+  console.log(vault.address);
 };
 
 Main();
