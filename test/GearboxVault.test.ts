@@ -123,10 +123,14 @@ describe("GearboxVault Deployment", function () {
     });
 
     it("should withdraw liquidity", async function () {
-      const amountUsdc: any = 200e6;
+      const amountUsdc: any = 400e6;
       await usdcMock.approve(vault.address, amountUsdc);
       const shares = (await ERC4626.balanceOf(user.address)).toNumber();
-      await vault.connect(user).redeem(shares, user.address, user.address);
+      await vault
+        .connect(user)
+        .redeem(Math.ceil(shares / 2), user.address, user.address, {
+          gasLimit: 3000000,
+        });
       const yusdcMock = await ethers.getContractAtFromArtifact(
         ERC20Json,
         "0x748fa28c53a9307bf13ab41164723c133d59fa67"

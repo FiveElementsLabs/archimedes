@@ -34,7 +34,7 @@ contract LeverageUSDCVault is ERC4626 {
     ///@return total amount of assets
     function totalAssets() public view override returns (uint256) {
         uint256 total = creditFilter.calcTotalValue(address(creditAccount));
-        return total / levFactor; //getCollateral from gearbox
+        return total / (levFactor + 1); //TODO: check slippage difference in value
     }
 
     ///@notice Hook to execute before withdraw
@@ -45,8 +45,11 @@ contract LeverageUSDCVault is ERC4626 {
         //redeposit all the stuff minus the assets to withdraw
         yearnAdapter.withdraw();
         creditManagerUSDC.repayCreditAccount(address(this));
+        creditAccount = address(0);
         //redeposit
-        afterDeposit(asset.balanceOf(address(this)) - assets, shares);
+        if (asset.balanceOf(address(this)) > assets) {
+            afterDeposit(asset.balanceOf(address(this)) - assets, shares);
+        }
     }
 
     ///@notice do something after withdrawing
@@ -61,10 +64,9 @@ contract LeverageUSDCVault is ERC4626 {
                 address(asset),
                 assets
             );
-            creditManagerUSDC.increaseBorrowedAmount((levFactor - 1) * assets);
+            creditManagerUSDC.increaseBorrowedAmount(levFactor * assets);
         }
         yearnAdapter.deposit();
-        console.log(address(this));
     }
 
     ///@notice create open credit account if it doesnt exist and do nothing if it exists
