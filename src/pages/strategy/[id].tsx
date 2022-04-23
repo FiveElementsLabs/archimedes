@@ -283,7 +283,10 @@ const Strategy = () => {
               <Flex alignItems="center" gap="2rem">
                 <Avatar src={strat.imgSrc} />
                 <Text fontSize="xl" fontWeight="600">
-                  Collateral: <b>${Math.trunc(Tvl / (leverage * 1e6))}</b>
+                  Collateral:{" "}
+                  <b>
+                    ${Math.trunc(Tvl / (leverage * 1e6)) * (Shares / Supply)}
+                  </b>
                 </Text>
                 <Text fontSize="xl" fontWeight="600">
                   Shares: <b>{(Shares / 1e6).toString()}</b> of{" "}
