@@ -1,12 +1,13 @@
 import { Box, Heading } from "@chakra-ui/react";
 import Layout from "../components/layout";
 import StragegyCard from "../components/strategyCard";
+import strategies from "../lib/strategies";
 
 export default function indexPage() {
   return (
     <Layout>
       <Heading fontSize="3xl" textAlign="center">
-        Choose your favorite Automated strategy
+        Choose an Automated strategy
       </Heading>
 
       <Box
@@ -16,37 +17,17 @@ export default function indexPage() {
         pt={8}
         pb={20}
       >
-        <StragegyCard
-          name="USDC 10x Yearn"
-          desc="Gearbox Leveraged"
-          imgSrc="https://www.cryptofonts.com/img/icons/usdc.svg"
-        />
-        <StragegyCard
-          name="ETH 5x Lido"
-          desc="Gearbox Leveraged"
-          imgSrc="https://www.cryptofonts.com/img/icons/eth.svg"
-        />
-        <StragegyCard
-          name="Exotic Options"
-          desc="Gearbox Leveraged"
-          imgSrc="https://www.cryptofonts.com/img/icons/options.svg"
-        />
-
-        <StragegyCard
-          name="USDT 10x Curve"
-          desc="Gearbox Leveraged"
-          imgSrc="https://www.cryptofonts.com/img/icons/usdt.svg"
-        />
-        <StragegyCard
-          name="WBTC 5x Curve"
-          desc="Gearbox Leveraged"
-          imgSrc="https://www.cryptofonts.com/img/icons/wbtc.svg"
-        />
-        <StragegyCard
-          name="DAI 10x Yearn"
-          desc="Gearbox Leveraged"
-          imgSrc="https://www.cryptofonts.com/img/icons/dai.svg"
-        />
+        {strategies.map((strat, idx) => (
+          <StragegyCard
+            key={idx}
+            id={idx}
+            name={strat.name}
+            desc={strat.desc}
+            imgSrc={strat.imgSrc}
+            tvl={strat.tvl}
+            apy={strat.apy}
+          />
+        ))}
       </Box>
     </Layout>
   );

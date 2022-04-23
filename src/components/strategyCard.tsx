@@ -13,12 +13,22 @@ import {
 } from "@chakra-ui/react";
 
 interface IStrategy {
+  id: number;
   imgSrc: string;
   name: string;
   desc: string;
+  apy: number;
+  tvl: number;
 }
 
-export default function StragegyCard({ imgSrc, name, desc }: IStrategy) {
+export default function StragegyCard({
+  id,
+  imgSrc,
+  name,
+  desc,
+  apy,
+  tvl,
+}: IStrategy) {
   return (
     <Center>
       <Box
@@ -58,20 +68,20 @@ export default function StragegyCard({ imgSrc, name, desc }: IStrategy) {
 
           <Stack direction={"row"} justify={"center"} spacing={6}>
             <Stack spacing={0} align={"center"}>
-              <Text fontWeight={600}>$230k</Text>
+              <Text fontWeight={600}>${tvl}k</Text>
               <Text fontSize={"sm"} color={"gray.500"}>
                 TVL
               </Text>
             </Stack>
             <Stack spacing={0} align={"center"}>
-              <Text fontWeight={600}>52%</Text>
+              <Text fontWeight={600}>{apy}%</Text>
               <Text fontSize={"sm"} color={"gray.500"}>
                 APY
               </Text>
             </Stack>
           </Stack>
 
-          <Link href="/strategy/1" passHref>
+          <Link href={`/strategy/${id}`} passHref>
             <Button
               w={"full"}
               mt={8}

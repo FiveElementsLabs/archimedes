@@ -13,9 +13,10 @@ contract LeverageUSDCVault is ERC4626 {
     ICreditManager public creditManagerUSDC =
         ICreditManager(0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3);
     IYVault public immutable yearnAdapter =
-        IYVault(0x0B21A1C329D75803d47cdc2FDB1c1A82863297FE);
+        IYVault(0x7DE5C945692858Cef922DAd3979a1B8bfA77A9B4);
     ICreditFilter public creditFilter =
         ICreditFilter(0x6f706028D7779223a51fA015f876364d7CFDD5ee);
+    ERC20 yvUSDC = ERC20(0x980E4d8A22105c2a2fA2252B7685F32fc7564512);
     uint256 yearnBalance = 0;
 
     constructor(
@@ -27,7 +28,10 @@ contract LeverageUSDCVault is ERC4626 {
     ///@notice return the total amount of collaterall from gearbox
     ///@return total amount of assets
     function totalAssets() public view override returns (uint256) {
-        return asset.balanceOf(address(this));
+        (uint256 borrowedAmount, ) = creditManagerUSDC
+            .getCreditAccountParameters(address(creditAccount));
+
+        return borrowedAmount.div(5); //getCollateral from gearbox
     }
 
     ///@notice Hook to execute before withdraw
@@ -58,13 +62,8 @@ contract LeverageUSDCVault is ERC4626 {
             creditManagerUSDC.increaseBorrowedAmount(4 * assets);
             console.log("after increase borrowd");
         }
-        console.log(yearnAdapter.token());
-        console.log(creditFilter.isTokenAllowed(yearnAdapter.token()));
-        console.log("pre deposit yearn");
-        yearnBalance += yearnAdapter.deposit(
-            10,
-            0x3B55a47d6ffE0b7bb1762109faFa5B84180c1111
-        );
+        yearnBalance += yearnAdapter.deposit();
+        console.log(address(this));
         console.log("deposited to yearn");
     }
 

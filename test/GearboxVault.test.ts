@@ -55,6 +55,7 @@ describe("GearboxVault Deployment", function () {
   before("Creating all environment", async function () {
     const signers = await ethers.getSigners();
     user = signers[0];
+    console.log("address: ", user.address);
     //Get mock token
     usdcMock = await ethers.getContractAtFromArtifact(
       ERC20Json,
@@ -96,10 +97,27 @@ describe("GearboxVault Deployment", function () {
   describe("LeverageVault", function () {
     it("should create credit account on first use", async function () {
       const amountUsdc = 200e6;
-      console.log(await usdcMock.balanceOf(user.address));
       await usdcMock.approve(vault.address, amountUsdc);
-      await vault.connect(user).deposit(amountUsdc, vault.address);
+      await vault.connect(user).deposit(amountUsdc, user.address);
+      const yusdcMock = await ethers.getContractAtFromArtifact(
+        ERC20Json,
+        "0x748fa28c53a9307bf13ab41164723c133d59fa67"
+      );
+      expect(await yusdcMock.balanceOf(user.address)).to.eq(amountUsdc);
       //check if vault address is linked to a credit account
+    });
+
+    it("should add liquidity on second use", async function () {
+      const amountUsdc = 200e6;
+      await usdcMock.approve(vault.address, amountUsdc);
+      await vault.connect(user).deposit(amountUsdc, user.address);
+      const yusdcMock = await ethers.getContractAtFromArtifact(
+        ERC20Json,
+        "0x748fa28c53a9307bf13ab41164723c133d59fa67"
+      );
+      expect(await yusdcMock.balanceOf(user.address).toNumber()).to.gt(
+        amountUsdc
+      );
     });
   });
 });
