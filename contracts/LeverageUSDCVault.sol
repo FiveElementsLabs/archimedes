@@ -33,6 +33,7 @@ contract LeverageUSDCVault is ERC4626 {
     ///@notice return the total amount of collateral from gearbox
     ///@return total amount of assets
     function totalAssets() public view override returns (uint256) {
+        if (creditAccount == address(0)) return 1;
         uint256 total = creditFilter.calcTotalValue(address(creditAccount));
         return total / (levFactor + 1); //TODO: check slippage difference in value
     }
@@ -57,6 +58,7 @@ contract LeverageUSDCVault is ERC4626 {
     ///@param shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
         ///@dev open credit manager if it does not exist
+        console.log("inside deposit");
         asset.approve(address(creditManagerUSDC), 2**256 - 1);
         if (!_getCreditAccount(assets)) {
             creditManagerUSDC.addCollateral(
@@ -94,12 +96,12 @@ contract LeverageUSDCVault is ERC4626 {
         );
     }
 
-    // Close position and reopen with lower leverage
+    /* // Close position and reopen with lower leverage
     function decreaseLeverage() external onlyOwner {
         //redeposit all the stuff minus the assets to withdraw
         yearnBalance -= yearnAdapter.withdraw(yearnBalance, address(this));
         creditManagerUSDC.repayCreditAccount(address(this));
-    }
+    } */
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only Owner");

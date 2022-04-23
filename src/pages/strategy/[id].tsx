@@ -21,6 +21,17 @@ const Strategy = () => {
   const strat = strategies[Number(id)] || null;
 
   const cardBg = useColorModeValue("gray.200", "gray.700");
+  const cardBg2 = useColorModeValue("gray.300", "gray.600");
+  const buttonBg = useColorModeValue("#388d9e", "#0a4faf");
+  const iconsBg = useColorModeValue("#04346f", "#4083e0");
+  const card1Shadow = useColorModeValue(
+    "0 0 0 3px rgba(117, 69, 211, 0.6)",
+    "0 0 0 3px rgba(160, 116, 248, 0.6)"
+  );
+  const card2Shadow = useColorModeValue(
+    "0 0 0 3px rgba(106, 49, 221, 0.6)",
+    "0 0 0 3px rgba(68, 124, 220, 0.6)"
+  );
 
   return (
     <Layout>
@@ -37,7 +48,7 @@ const Strategy = () => {
                   {strat.desc} Strategy
                 </Badge>
               </Box>
-              <Heading mt={1} fontSize="4xl" fontWeight="600">
+              <Heading mt={2} fontSize="4xl" fontWeight="700">
                 {strat.name}
               </Heading>
               <Text mt={3} fontSize="lg" opacity={0.8}>
@@ -46,15 +57,22 @@ const Strategy = () => {
 
               <Flex mt={6} gap="1rem">
                 <Box
-                  id="card"
+                  id="card1"
                   w="100px"
                   display="grid"
                   placeContent="center"
                   bgColor={cardBg}
                   rounded="lg"
+                  boxShadow={card1Shadow}
                 >
                   <Flex flexDirection="column" textAlign="center">
-                    <Box mt={5} w="full" display="grid" placeContent="center">
+                    <Box
+                      mt={5}
+                      w="full"
+                      display="grid"
+                      placeContent="center"
+                      color={iconsBg}
+                    >
                       <CurrencyCircleDollar size={32} />
                     </Box>
                     <Text mt={2} fontSize="sm">
@@ -66,15 +84,22 @@ const Strategy = () => {
                   </Flex>
                 </Box>
                 <Box
-                  id="card"
+                  id="card2"
                   w="100px"
                   display="grid"
                   placeContent="center"
                   bgColor={cardBg}
                   rounded="lg"
+                  boxShadow={card1Shadow}
                 >
                   <Flex flexDirection="column" textAlign="center">
-                    <Box mt={5} w="full" display="grid" placeContent="center">
+                    <Box
+                      mt={5}
+                      w="full"
+                      display="grid"
+                      placeContent="center"
+                      color={iconsBg}
+                    >
                       <Coins size={32} />
                     </Box>
                     <Text mt={2} fontSize="sm">
@@ -86,15 +111,22 @@ const Strategy = () => {
                   </Flex>
                 </Box>
                 <Box
-                  id="card"
+                  id="card3"
                   w="100px"
                   display="grid"
                   placeContent="center"
-                  bgColor={cardBg}
                   rounded="lg"
+                  bgColor={cardBg}
+                  boxShadow={card1Shadow}
                 >
                   <Flex flexDirection="column" textAlign="center">
-                    <Box mt={5} w="full" display="grid" placeContent="center">
+                    <Box
+                      mt={5}
+                      w="full"
+                      display="grid"
+                      placeContent="center"
+                      color={iconsBg}
+                    >
                       <ChartLineUp size={32} />
                     </Box>
                     <Text mt={2} fontSize="sm">
@@ -114,8 +146,9 @@ const Strategy = () => {
               bgColor={cardBg}
               rounded="lg"
               p={5}
-              w="320px"
+              w="350px"
               h="260px"
+              boxShadow={card2Shadow}
             >
               <Heading fontSize="3xl" fontWeight="700">
                 Deposit
@@ -146,14 +179,19 @@ const Strategy = () => {
                   Max
                 </Button>
               </Flex>
-              <Button mt={3} w="full">
+              <Button mt={3} w="full" backgroundColor={buttonBg}>
                 Deposit
               </Button>
             </Box>
           </Flex>
 
           <Box mt={5} bgColor={cardBg} rounded="lg" p={4}>
-            <Heading fontSize="2xl">Your Position</Heading>
+            <Heading mb={3} fontSize="2xl">
+              Your Position
+            </Heading>
+            <Flex p={4} flexDir="row" w="full" bgColor={cardBg2} rounded="lg">
+              <Avatar src={strat.imgSrc} />
+            </Flex>
             <Text>Shares + yUSDC owned, health factor, total borrowed</Text>
           </Box>
 

@@ -49,6 +49,7 @@ async function findbalanceSlot(MockToken: any, user: any) {
 
 describe("GearboxVault Deployment", function () {
   let user: any;
+  let user2: any;
   let usdcMock: Contract;
   let vault: Contract;
   let ERC4626: Contract;
@@ -57,16 +58,11 @@ describe("GearboxVault Deployment", function () {
   before("Creating all environment", async function () {
     const signers = await ethers.getSigners();
     user = signers[0];
-    console.log("address: ", user.address);
+    user2 = signers[1];
     //Get mock token
     usdcMock = await ethers.getContractAtFromArtifact(
       ERC20Json,
       "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df"
-    );
-
-    ERC4626 = await ethers.getContractAtFromArtifact(
-      ERC20Json,
-      "0x748fa28c53a9307bf13ab41164723c133d59fa67"
     );
 
     //mint some token
@@ -87,6 +83,19 @@ describe("GearboxVault Deployment", function () {
       value,
     ]);
 
+    const slot2 = await findbalanceSlot(usdcMock, user2);
+
+    let probedSlot2 = ethers.utils.keccak256(
+      encode(["address", "uint"], [user2.address, slot2])
+    );
+    value = encode(["uint"], [ethers.utils.parseEther("100000000")]);
+
+    await hre.network.provider.send("hardhat_setStorageAt", [
+      usdcMock.address,
+      probedSlot2,
+      value,
+    ]);
+
     const GearboxVaultFactory = await ethers.getContractFactory(
       "LeverageUSDCVault"
     );
@@ -97,8 +106,8 @@ describe("GearboxVault Deployment", function () {
     );
     await vault.deployed();
 
-    //credit manager address 0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3
-    //const creditManager = await ethers.getContractAt("0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3");
+    ERC4626 = await ethers.getContractAtFromArtifact(ERC20Json, vault.address);
+    console.log(ERC4626);
   });
 
   describe("LeverageVault", function () {
@@ -106,6 +115,7 @@ describe("GearboxVault Deployment", function () {
       const amountUsdc: any = 200e6;
       await usdcMock.approve(vault.address, amountUsdc);
       await vault.connect(user).deposit(amountUsdc, user.address);
+      console.log("allow");
 
       expect((await ERC4626.balanceOf(user.address)).toString()).to.eq(
         amountUsdc.toString()
@@ -118,6 +128,15 @@ describe("GearboxVault Deployment", function () {
       await usdcMock.approve(vault.address, amountUsdc);
       await vault.connect(user).deposit(amountUsdc, user.address);
       expect((await ERC4626.balanceOf(user.address)).toNumber()).to.gt(
+        amountUsdc
+      );
+    });
+
+    it("should deposit liquidity another user", async function () {
+      const amountUsdc: any = 200e6;
+      await usdcMock.connect(user2).approve(vault.address, amountUsdc);
+      await vault.connect(user2).deposit(amountUsdc, user2.address);
+      expect((await ERC4626.balanceOf(user2.address)).toNumber()).to.eq(
         amountUsdc
       );
     });

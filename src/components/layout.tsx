@@ -1,5 +1,6 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { Box, Container } from "@chakra-ui/react";
+import { Box, Container, Fade } from "@chakra-ui/react";
 import { useWallet } from "../hooks/useWallet";
 import { useSharedState } from "../lib/store";
 import Navbar from "./navbar";
@@ -7,6 +8,7 @@ import Navbar from "./navbar";
 const Layout = ({ children }) => {
   const [{ account }] = useSharedState();
   const { autoLoginWallet } = useWallet();
+  const router = useRouter();
 
   // Things that need to be loaded only on the first render
   useEffect(() => {
@@ -20,7 +22,11 @@ const Layout = ({ children }) => {
   return (
     <Container maxW="container.lg">
       <Navbar />
-      <Box mt={4}>{children}</Box>
+      <Box mt={4}>
+        <Fade key={router.asPath} in>
+          {children}
+        </Fade>
+      </Box>
     </Container>
   );
 };
