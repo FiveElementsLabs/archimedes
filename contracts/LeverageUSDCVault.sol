@@ -18,7 +18,9 @@ contract LeverageUSDCVault is ERC4626 {
     ICreditFilter public creditFilter =
         ICreditFilter(0x6f706028D7779223a51fA015f876364d7CFDD5ee);
     uint256 public levFactor = 300;
+    //health factor in hundredths of a percentage point
     uint256 public criticalHealthFactor;
+    uint256 public minCriticalHealthFactor = 10100;
 
     //uint256 public entryFee;
     //uint256 public entryFeeMax = 100;
@@ -29,6 +31,10 @@ contract LeverageUSDCVault is ERC4626 {
         string memory _symbol,
         uint256 _criticalHealthfactor //uint256 _entryFee
     ) public ERC4626(_asset, _name, _symbol) {
+        require(
+            _criticalHealthfactor > minCriticalHealthFactor,
+            "Critical health factor must be greater than 1.01"
+        );
         owner = msg.sender;
         criticalHealthFactor = _criticalHealthfactor;
         //entryFee = _entryFee;
