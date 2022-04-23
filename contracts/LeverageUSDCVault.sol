@@ -17,9 +17,6 @@ contract LeverageUSDCVault is ERC4626 {
         IYVault(0x7DE5C945692858Cef922DAd3979a1B8bfA77A9B4);
     ICreditFilter public creditFilter =
         ICreditFilter(0x6f706028D7779223a51fA015f876364d7CFDD5ee);
-    ERC20 yvUSDC = ERC20(0x980E4d8A22105c2a2fA2252B7685F32fc7564512);
-    ERC20 USDC = ERC20(0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df);
-    // Leverage Factor
     uint256 public levFactor = 300;
     uint256 public criticalHealthFactor;
 
