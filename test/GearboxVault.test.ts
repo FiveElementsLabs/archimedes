@@ -1,8 +1,7 @@
-import "@nomiclabs/hardhat-ethers";
 import { expect } from "chai";
-import { hexZeroPad } from "ethers/lib/utils";
-import { ethers } from "hardhat";
-import hre from "hardhat";
+const { ethers } = require("hardhat");
+import { Contract, ContractFactory } from "ethers";
+const hre = require("hardhat");
 import "mocha";
 
 const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
@@ -49,9 +48,9 @@ async function findbalanceSlot(MockToken: any, user: any) {
 }
 
 describe("GearboxVault Deployment", function () {
-  let user;
-  let usdcMock;
-  let vault;
+  let user: any;
+  let usdcMock: Contract;
+  let vault: Contract;
 
   before("Creating all environment", async function () {
     const signers = await ethers.getSigners();
@@ -80,14 +79,27 @@ describe("GearboxVault Deployment", function () {
       value,
     ]);
 
-    console.log(await usdcMock.balanceOf(user.address));
-
-    const GearboxVaultFactory = await ethers.getContractFactory("LeverageUSDC");
+    const GearboxVaultFactory = await ethers.getContractFactory(
+      "LeverageUSDCVault"
+    );
     vault = await GearboxVaultFactory.deploy(
       usdcMock.address,
       "GearboxVault",
       "GBV"
     );
     await vault.deployed();
+
+    //credit manager address 0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3
+    //const creditManager = await ethers.getContractAt("0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3");
+  });
+
+  describe("LeverageVault", function () {
+    it("should create credit account on first use", async function () {
+      const amountUsdc = 200e6;
+      console.log(await usdcMock.balanceOf(user.address));
+      await usdcMock.approve(vault.address, amountUsdc);
+      await vault.connect(user).deposit(amountUsdc, vault.address);
+      //check if vault address is linked to a credit account
+    });
   });
 });

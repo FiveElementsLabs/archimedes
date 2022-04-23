@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <Container maxW="container.md">
+    <Container maxW="container.lg">
       <Navbar />
       <Box mt={4}>{children}</Box>
     </Container>

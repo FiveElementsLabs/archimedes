@@ -1,7 +1,7 @@
-const { ethers } = require("hardhat");
-const hre = require("hardhat");
+import { ethers } from "hardhat";
+import hre from "hardhat";
 
-const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
+import ERC20Json from "@openzeppelin/contracts/build/contracts/ERC20.json";
 
 async function findbalanceSlot(MockToken: any, user: any) {
   const encode = (types: any, values: any) =>

@@ -1,12 +1,11 @@
-require("@nomiclabs/hardhat-waffle");
-require("@typechain/hardhat");
-require("@nomiclabs/hardhat-ethers");
+import "@nomiclabs/hardhat-waffle";
+import "@typechain/hardhat";
+import "@nomiclabs/hardhat-ethers";
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-
-module.exports = {
+export default {
   solidity: {
     compilers: [
       {
