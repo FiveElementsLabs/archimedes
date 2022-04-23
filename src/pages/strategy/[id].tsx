@@ -223,7 +223,7 @@ const Strategy = () => {
                   Shares: <b>24.5</b> of <b>1240.2</b>
                 </Text>
               </Flex>
-              <Button colorScheme="blue">
+              <Button colorScheme="blue" onClick={() => withdraw()}>
                 Withdraw
                 <Box ml={2}>
                   <XCircle size={24} />

@@ -23,19 +23,16 @@ export const useStrategyUSDC = () => {
   };
 
   const withdraw = async () => {
-    const signer = (await provider.getSigners())[0];
+    const signer = await provider.getSigner();
     const vault = new ethers.Contract(
       ARCHIMEDES_VAULT_ADDRESS,
       ARCHIMEDES_VAULT_ABI.abi,
       signer
     );
-    const ERC4626 = new ethers.Contract(
-      ARCHIMEDES_VAULT_ADDRESS,
-      ERC20_ABI.abi,
-      signer
-    );
+    console.log(vault);
+    console.log(account);
 
-    const shares = (await ERC4626.balanceOf(account)).toNumber();
+    const shares = (await vault.balanceOf(account)).toNumber();
     console.log(`:: Withdrawing ${shares} USDC`);
 
     await vault.redeem(Math.ceil(shares / 2), account, account);

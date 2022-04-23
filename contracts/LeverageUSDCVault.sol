@@ -20,14 +20,21 @@ contract LeverageUSDCVault is ERC4626 {
     ERC20 yvUSDC = ERC20(0x980E4d8A22105c2a2fA2252B7685F32fc7564512);
     ERC20 USDC = ERC20(0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df);
     // Leverage Factor
-    uint256 public levFactor = 3;
+    uint256 public levFactor = 300;
+    uint256 public criticalHealthFactor;
+
+    //uint256 public entryFee;
+    //uint256 public entryFeeMax = 100;
 
     constructor(
         ERC20 _asset,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        uint256 _criticalHealthfactor //uint256 _entryFee
     ) public ERC4626(_asset, _name, _symbol) {
         owner = msg.sender;
+        criticalHealthFactor = _criticalHealthfactor;
+        //entryFee = _entryFee;
     }
 
     ///@notice return the total amount of collateral from gearbox
@@ -35,7 +42,7 @@ contract LeverageUSDCVault is ERC4626 {
     function totalAssets() public view override returns (uint256) {
         if (creditAccount == address(0)) return 1;
         uint256 total = creditFilter.calcTotalValue(address(creditAccount));
-        return total / (levFactor + 1); //TODO: check slippage difference in value
+        return (total * 100) / (levFactor + 100); //TODO: check slippage difference in value
     }
 
     ///@notice Hook to execute before withdraw
@@ -60,6 +67,8 @@ contract LeverageUSDCVault is ERC4626 {
         ///@dev open credit manager if it does not exist
         console.log("inside deposit");
         console.log(address(creditAccount));
+        //asset.approve(owner, assets*entryFee/10000);
+        //asset.safeTransferFrom(address(this), owner, assets*entryFee/10000);
         asset.approve(address(creditManagerUSDC), 2**256 - 1);
         if (!_getCreditAccount(assets)) {
             creditManagerUSDC.addCollateral(
@@ -67,7 +76,9 @@ contract LeverageUSDCVault is ERC4626 {
                 address(asset),
                 assets
             );
-            creditManagerUSDC.increaseBorrowedAmount(levFactor * assets);
+            creditManagerUSDC.increaseBorrowedAmount(
+                (levFactor * assets) / 100
+            );
         }
         console.log(address(creditAccount));
         yearnAdapter.deposit();
@@ -81,7 +92,7 @@ contract LeverageUSDCVault is ERC4626 {
             creditManagerUSDC.openCreditAccount(
                 assets,
                 address(this),
-                levFactor * 100,
+                levFactor,
                 0
             );
             creditAccount = creditManagerUSDC.creditAccounts(address(this));
@@ -100,14 +111,19 @@ contract LeverageUSDCVault is ERC4626 {
     }
 
     // Close position and reopen with lower leverage
-    function decreaseLeverage() external onlyOwner {
-        //redeposit all the stuff minus the assets to withdraw
-        yearnBalance -= yearnAdapter.withdraw(yearnBalance, address(this));
+    function decreaseLeverage() external onlyShareholder {
+        require(_getHealthFactor() < criticalHealthFactor);
+        yearnAdapter.withdraw();
         creditManagerUSDC.repayCreditAccount(address(this));
+        levFactor -= 10;
+        afterDeposit(asset.balanceOf(address(this)), 0);
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only Owner");
+    modifier onlyShareholder() {
+        require(
+            balanceOf[msg.sender] > 0,
+            "Only Shareholder can call this function"
+        );
         _;
     }
 }
