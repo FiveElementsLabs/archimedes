@@ -7,7 +7,7 @@ export default function indexPage() {
   return (
     <Layout>
       <Heading fontSize="3xl" textAlign="center">
-        Choose an Automated strategy
+        Leverage made simple
       </Heading>
 
       <Box

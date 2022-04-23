@@ -28,12 +28,47 @@ import strategies from "../../lib/strategies";
 
 const Strategy = () => {
   const [{ provider }] = useSharedState();
-  const { deposit, withdraw, balanceOf, healthFactor } = useStrategyUSDC();
+  const {
+    deposit,
+    withdraw,
+    balanceOf,
+    healthFactor,
+    setShares,
+    currentLeverage,
+  } = useStrategyUSDC();
   const [amountUsdc, setAmountUsdc] = useState(0);
   const router = useRouter();
   const { id } = router.query;
 
   const strat = strategies[Number(id)] || null;
+
+  const [Tvl, setTvl] = useState(0);
+  const [HealtFactor, setHealtFactor] = useState(0);
+  const [Shares, setSharesValue] = useState(0);
+  const [Supply, setSupply] = useState(0);
+  const [leverage, setLeverage] = useState(0);
+
+  useEffect(() => {
+    const getData = async () => {
+      if (provider) {
+        const balance = await balanceOf();
+        setTvl(balance);
+
+        const HF: any = await healthFactor();
+        setHealtFactor(HF);
+
+        const { shares, supply } = await setShares();
+        setSharesValue(shares);
+
+        setSupply(supply);
+
+        const currentLev: any = await currentLeverage();
+        setLeverage(currentLev);
+      }
+    };
+
+    getData();
+  }, [provider]);
 
   const cardBg = useColorModeValue("gray.200", "gray.800");
   const cardBg2 = useColorModeValue("gray.300", "gray.700");
@@ -54,22 +89,6 @@ const Strategy = () => {
     "0 0 0 3px rgba(106, 49, 221, 0.6)",
     "0 0 0 3px rgba(68, 124, 220, 0.6)"
   );
-  const [Tvl, setTvl] = useState(0);
-  const [HealtFactor, setHealtFactor] = useState(0);
-
-  useEffect(() => {
-    const getData = async () => {
-      if (provider) {
-        const balance = await balanceOf();
-        setTvl(balance);
-
-        const HF: any = await healthFactor();
-        setHealtFactor(HF);
-      }
-    };
-
-    getData();
-  }, [provider]);
 
   return (
     <Layout>
@@ -99,7 +118,7 @@ const Strategy = () => {
                     colorScheme="green"
                   >
                     <ShieldCheck size={25} />
-                    <Text ml={1}> liquidation protected</Text>
+                    <Text ml={1}> liquidation protection</Text>
                   </Badge>
                 </Flex>
               </Box>
@@ -161,7 +180,7 @@ const Strategy = () => {
                       TVL
                     </Text>
                     <Heading mb={5} fontSize="xl">
-                      <Box>${Tvl}k</Box>
+                      <Box>${(Tvl / 1e9).toFixed(1)}k</Box>
                     </Heading>
                   </Flex>
                 </Box>
@@ -264,10 +283,11 @@ const Strategy = () => {
               <Flex alignItems="center" gap="2rem">
                 <Avatar src={strat.imgSrc} />
                 <Text fontSize="xl" fontWeight="600">
-                  Collateral: <b>$10,532.52</b>
+                  Collateral: <b>${Math.trunc(Tvl / (leverage * 1e6))}</b>
                 </Text>
                 <Text fontSize="xl" fontWeight="600">
-                  Shares: <b>24.5</b> of <b>1240.2</b>
+                  Shares: <b>{(Shares / 1e6).toString()}</b> of{" "}
+                  <b>{(Supply / 1e6).toString()}</b>
                 </Text>
               </Flex>
               <Button
@@ -303,15 +323,16 @@ const Strategy = () => {
                 </Box>
                 <Text display="flex" fontSize="xl" fontWeight="600">
                   Health Factor:
-                  <span style={{ marginLeft: "8px" }} color="orange.600">
+                  <span style={{ marginLeft: "8px", color: "orange" }}>
                     {HealtFactor}
                   </span>
                 </Text>
                 <Text fontSize="xl" fontWeight="600">
-                  Borrowed value: <b>$2,214,241.04</b>
+                  Borrowed value:{" "}
+                  <b>${Math.trunc((Tvl - Math.trunc(Tvl / leverage)) / 1e6)}</b>
                 </Text>
                 <Text fontSize="xl" fontWeight="600">
-                  Leverage: <b>10x</b>
+                  Leverage: <b>{leverage}</b>
                 </Text>
               </Flex>
             </Flex>
@@ -320,8 +341,9 @@ const Strategy = () => {
           <Box mt={4} bgColor={cardBg} rounded="lg" p={4}>
             <Heading fontSize="2xl">About this strategy</Heading>
             <Text my={2}>
-              Imagine we had a very precise description for this strategy. Most
-              people would probably not read it anyway
+              This strategy leverages the vault denomination assets with
+              Gearbox. Liquidity is employed in Yearn vaults to earn extra
+              yield.
             </Text>
           </Box>
         </Box>

@@ -54,6 +54,7 @@ const Main = async () => {
   );
 
   //mint some token
+  /*
   const slot = await findbalanceSlot(usdcMock, user);
 
   const encode = (types: any, values: any) =>
@@ -69,32 +70,26 @@ const Main = async () => {
     probedSlot,
     value,
   ]);
+  */
+  //console.log(await usdcMock.balanceOf(user.address));
 
-  console.log(await usdcMock.balanceOf(user.address));
-
-  /* const GearboxVaultFactory = await ethers.getContractFactory(
+  /*  const GearboxVaultFactory = await ethers.getContractFactory(
     "LeverageUSDCVault"
   );
   const vault = await GearboxVaultFactory.deploy(
     usdcMock.address,
     "USD Coin",
-    "USDC"
+    "USDC",
+    11000
   );
-  await vault.deployed();
+  //0x146C8b6dd3eAaE611f6e74533767A0607c9C919a
+  await vault.deployed(); */
   await usdcMock
     .connect(user)
-    .approve(vault.address, "10000000000000000000000"); */
-
-  //adapter 0x7DE5C945692858Cef922DAd3979a1B8bfA77A9B4
-  const adap = await ethers.getContractAt(
-    "ERC4626",
-    "0x980E4d8A22105c2a2fA2252B7685F32fc7564512"
-  );
-  const res = await adap.balanceOf(
-    "0x3aDd51E923D44c70CdF56551b56404209765cbaA"
-  );
-
-  console.log(res);
+    .approve(
+      "0x146C8b6dd3eAaE611f6e74533767A0607c9C919a",
+      "10000000000000000000000"
+    );
 
   //console.log(vault.address);
 };

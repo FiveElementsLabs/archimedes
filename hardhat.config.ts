@@ -24,6 +24,10 @@ export default {
     ],
   },
   networks: {
+    kovan: {
+      url: "https://kovan.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      accounts: [process.env.PRIVATE_KEY],
+    },
     hardhat: {
       forking: {
         enabled: true,
