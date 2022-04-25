@@ -1,16 +1,17 @@
-import { expect } from "chai";
-const { ethers } = require("hardhat");
-import { Contract, ContractFactory } from "ethers";
 const hre = require("hardhat");
+const { ethers } = require("hardhat");
+import { Contract } from "ethers";
+import { expect } from "chai";
 import "mocha";
 
 const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
 
-//find the slot in memory of the balance of the tokenAddress and return it
+// find the slot in memory of the balance of the tokenAddress and return it
 async function findbalanceSlot(MockToken: any, user: any) {
   const encode = (types: any, values: any) =>
     ethers.utils.defaultAbiCoder.encode(types, values);
   const account = user.address;
+
   for (let i = 0; i < 100; i++) {
     let balanceSlot = ethers.utils.keccak256(
       encode(["address", "uint"], [account, i])
@@ -47,25 +48,20 @@ async function findbalanceSlot(MockToken: any, user: any) {
   }
 }
 
-describe("GearboxVault Deployment", function () {
+describe("LeverageUSDCVault", function () {
   let user: any;
   let user2: any;
+  let shares: any;
   let usdcMock: Contract;
   let vault: Contract;
   let ERC4626: Contract;
-  let shares: any;
 
   before("Creating all environment", async function () {
-    const signers = await ethers.getSigners();
-    user = signers[0];
-    user2 = signers[1];
-    //Get mock token
-    usdcMock = await ethers.getContractAtFromArtifact(
-      ERC20Json,
-      "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df"
-    );
+    const [user, user2] = await ethers.getSigners();
 
-    //mint some token
+    //Get mock token
+    const USDC_ADDRESS = "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df";
+    usdcMock = await ethers.getContractAtFromArtifact(ERC20Json, USDC_ADDRESS);
 
     const slot = await findbalanceSlot(usdcMock, user);
 
@@ -96,10 +92,10 @@ describe("GearboxVault Deployment", function () {
       value,
     ]);
 
-    const GearboxVaultFactory = await ethers.getContractFactory(
+    const LeverageUSDCVault = await ethers.getContractFactory(
       "LeverageUSDCVault"
     );
-    vault = await GearboxVaultFactory.deploy(
+    vault = await LeverageUSDCVault.deploy(
       usdcMock.address,
       "USD Coin",
       "USDC"
