@@ -2,6 +2,7 @@
   "license": "MIT",
   "scripts": {
     "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
     "frontend:dev": "next dev",
     "frontend:build": "next build",
     "frontend:start": "next start"

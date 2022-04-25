@@ -10,7 +10,9 @@ const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
 async function findbalanceSlot(MockToken: any, user: any) {
   const encode = (types: any, values: any) =>
     ethers.utils.defaultAbiCoder.encode(types, values);
+  console.log(1);
   const account = user.address;
+  console.log(2);
 
   for (let i = 0; i < 100; i++) {
     let balanceSlot = ethers.utils.keccak256(
@@ -57,7 +59,7 @@ describe("LeverageUSDCVault", function () {
   let ERC4626: Contract;
 
   before("Creating all environment", async function () {
-    const [user, user2] = await ethers.getSigners();
+    [user, user2] = await ethers.getSigners();
 
     //Get mock token
     const USDC_ADDRESS = "0x31EeB2d0F9B6fD8642914aB10F4dD473677D80df";

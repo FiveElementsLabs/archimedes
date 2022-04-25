@@ -35,7 +35,7 @@ contract LeverageUSDCVault is ERC4626 {
         string memory _name,
         string memory _symbol,
         uint256 _criticalHealthfactor //uint256 _entryFee
-    ) public ERC4626(_asset, _name, _symbol) {
+    ) ERC4626(_asset, _name, _symbol) {
         require(
             _criticalHealthfactor > minCriticalHealthFactor,
             "LeverageUSDCVault::constructor: Critical health factor must be greater than 1.01"
