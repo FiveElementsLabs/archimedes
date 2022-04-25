@@ -8,17 +8,22 @@ import "./interfaces/ICreditFilter.sol";
 import "hardhat/console.sol";
 
 contract LeverageUSDCVault is ERC4626 {
+    address public owner;
+
     ///@dev credit account associated with Vault
     address public creditAccount = address(0);
-    address public owner;
+
+    ///@dev leverage multiplier from Gearbox (final leverage is levFactor/100 + 1)
+    uint256 public levFactor = 300;
+
     ICreditManager public creditManagerUSDC =
         ICreditManager(0xdBAd1361d9A03B81Be8D3a54Ef0dc9e39a1bA5b3);
     IYVault public immutable yearnAdapter =
         IYVault(0x7DE5C945692858Cef922DAd3979a1B8bfA77A9B4);
     ICreditFilter public creditFilter =
         ICreditFilter(0x6f706028D7779223a51fA015f876364d7CFDD5ee);
-    uint256 public levFactor = 300;
-    //health factor in hundredths of a percentage point
+
+    ///@dev health factor in hundredths of a percentage point
     uint256 public criticalHealthFactor;
     uint256 public minCriticalHealthFactor = 10100;
 
@@ -33,7 +38,7 @@ contract LeverageUSDCVault is ERC4626 {
     ) public ERC4626(_asset, _name, _symbol) {
         require(
             _criticalHealthfactor > minCriticalHealthFactor,
-            "Critical health factor must be greater than 1.01"
+            "LeverageUSDCVault::constructor: Critical health factor must be greater than 1.01"
         );
         owner = msg.sender;
         criticalHealthFactor = _criticalHealthfactor;
@@ -48,7 +53,7 @@ contract LeverageUSDCVault is ERC4626 {
         return (total * 100) / (levFactor + 100); //TODO: check slippage difference in value
     }
 
-    ///@notice Hook to execute before withdraw
+    ///@notice hook to execute before withdraw
     ///@param assets amount of assets
     ///@param shares amount of shares
     function beforeWithdraw(uint256 assets, uint256 shares) internal override {
@@ -63,7 +68,7 @@ contract LeverageUSDCVault is ERC4626 {
         }
     }
 
-    ///@notice do something after withdrawing
+    ///@notice hook to execute after deposit
     ///@param assets amount of assets
     ///@param shares amount of shares
     function afterDeposit(uint256 assets, uint256 shares) internal override {
@@ -99,13 +104,15 @@ contract LeverageUSDCVault is ERC4626 {
         } else return false;
     }
 
-    //Health factor computation
+    ///@notice health factor computation
+    ///@return uint256 health factor
     function _getHealthFactor() internal view returns (uint256) {
         return
             creditFilter.calcCreditAccountHealthFactor(address(creditAccount));
     }
 
-    // Close position and reopen with lower leverage
+    ///@notice close position and reopen with lower leverage
+    ///@dev This is a temporary solution before using Gearbox v2
     function decreaseLeverage() external onlyShareholder {
         require(_getHealthFactor() < criticalHealthFactor);
         yearnAdapter.withdraw();
@@ -114,10 +121,11 @@ contract LeverageUSDCVault is ERC4626 {
         afterDeposit(asset.balanceOf(address(this)), 0);
     }
 
+    ///@notice modifier to allow only shareholders
     modifier onlyShareholder() {
         require(
             balanceOf[msg.sender] > 0,
-            "Only Shareholder can call this function"
+            "LeverageUSDCVault::onlyShareholder: Only shareholders can call this function."
         );
         _;
     }
