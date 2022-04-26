@@ -10,9 +10,7 @@ const ERC20Json = require("@openzeppelin/contracts/build/contracts/ERC20.json");
 async function findbalanceSlot(MockToken: any, user: any) {
   const encode = (types: any, values: any) =>
     ethers.utils.defaultAbiCoder.encode(types, values);
-  console.log(1);
   const account = user.address;
-  console.log(2);
 
   for (let i = 0; i < 100; i++) {
     let balanceSlot = ethers.utils.keccak256(
@@ -53,7 +51,6 @@ async function findbalanceSlot(MockToken: any, user: any) {
 describe("LeverageUSDCVault", function () {
   let user: any;
   let user2: any;
-  let shares: any;
   let usdcMock: Contract;
   let vault: Contract;
   let ERC4626: Contract;
@@ -100,7 +97,8 @@ describe("LeverageUSDCVault", function () {
     vault = await LeverageUSDCVault.deploy(
       usdcMock.address,
       "USD Coin",
-      "USDC"
+      "USDC",
+      10150
     );
     await vault.deployed();
 
@@ -112,7 +110,6 @@ describe("LeverageUSDCVault", function () {
       const amountUsdc: any = 200e6;
       await usdcMock.approve(vault.address, amountUsdc);
       await vault.connect(user).deposit(amountUsdc, user.address);
-      console.log("allow");
 
       expect((await ERC4626.balanceOf(user.address)).toString()).to.eq(
         amountUsdc.toString()
@@ -129,7 +126,7 @@ describe("LeverageUSDCVault", function () {
       );
     });
 
-    it("should deposit liquidity another user", async function () {
+    it("should let a different user deposit liquidity", async function () {
       const amountUsdc: any = 200e6;
       await usdcMock.connect(user2).approve(vault.address, amountUsdc);
       await vault.connect(user2).deposit(amountUsdc, user2.address);
