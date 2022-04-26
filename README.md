@@ -32,6 +32,7 @@ yarn frontend:dev
 yarn compile
 
 # tests
+# add a .env file according to the .env.example
 yarn test
 ```
 
