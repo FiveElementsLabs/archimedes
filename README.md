@@ -1,8 +1,10 @@
 <h1 align="center">Archimedes</h1>
 
+![Archimedes Strategy page](https://user-images.githubusercontent.com/48695862/165321633-5c478efb-283a-494b-a153-3b717d8d14aa.png)
+
 > Archimedes is an ETH Amsterdam hackaton project made by [Five Elements Labs](https://fiveelementslabs.com/)
 
-**🏆 Update: Archimedes won the 1st prize for Gearbox Protocol, 1st prize for Yearn Finance and 1st prize for Tribe DAO.**
+**🏆 Update: Archimedes won the 1st prize for Gearbox Protocol, Yearn Finance and Tribe DAO.**
 
 ## The idea
 
@@ -36,7 +38,7 @@ yarn compile
 yarn test
 ```
 
-## Other Resources
+## Useful Resources
 
 Gearbox:
 
@@ -47,3 +49,7 @@ ERC-4626:
 - <https://eips.ethereum.org/EIPS/eip-4626>
 - <https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol#L177>
 - <https://github.com/charmfinance/alpha-vaults-contracts/blob/main/contracts/AlphaVault.sol>
+
+## Recognition
+
+![Yearn finance tweet](https://user-images.githubusercontent.com/48695862/165321620-ee212340-4ddd-4b5b-971a-63f5a660ff0b.png)
