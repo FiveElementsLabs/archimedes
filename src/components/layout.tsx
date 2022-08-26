@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Box, Container, Fade } from "@chakra-ui/react";
 import { useWallet } from "../hooks/useWallet";
 import { useSharedState } from "../lib/store";
 import Navbar from "./navbar";
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const [{ account }] = useSharedState();
   const { autoLoginWallet } = useWallet();
   const router = useRouter();

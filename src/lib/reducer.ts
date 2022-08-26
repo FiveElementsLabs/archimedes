@@ -9,7 +9,8 @@ export const initialState = {
   is_connected: false,
   account: "",
   provider: null,
-  network: null,
+  network_name: null,
+  chain_id: null,
   loading: false,
 };
 
@@ -22,6 +23,8 @@ export const reducer = (state: typeof initialState, action: action) => {
         is_connected: true,
         account: action.payload.account,
         provider: action.payload.provider,
+        network_name: action.payload.network_name,
+        chain_id: action.payload.chain_id,
       };
 
     case actions.LOGOUT_WALLET:
@@ -31,13 +34,21 @@ export const reducer = (state: typeof initialState, action: action) => {
         is_connected: false,
         account: "",
         provider: null,
-        network: null,
+        network_name: null,
+        chain_id: null,
       };
 
     case actions.SET_LOADING:
       return {
         ...state,
         loading: action.payload,
+      };
+
+    case actions.CHANGE_NETWORK:
+      return {
+        ...state,
+        network_name: action.payload.network_name,
+        chain_id: action.payload.chain_id,
       };
 
     default:

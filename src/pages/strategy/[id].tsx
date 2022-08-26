@@ -10,7 +10,6 @@ import {
   Input,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import {
   Coins,
   ChartLineUp,
@@ -20,14 +19,16 @@ import {
   Drop,
   ShieldCheck,
 } from "phosphor-react";
+import { useRouter } from "next/router";
 
 import { useSharedState } from "../../lib/store";
 import { useStrategyUSDC } from "../../hooks/useStrategyUSDC";
 import Layout from "../../components/layout";
+import networks from "../../lib/networks";
 import strategies from "../../lib/strategies";
 
 const Strategy = () => {
-  const [{ provider }] = useSharedState();
+  const [{ provider, chain_id }] = useSharedState();
   const {
     deposit,
     withdraw,
@@ -50,26 +51,25 @@ const Strategy = () => {
 
   useEffect(() => {
     const getData = async () => {
-      if (provider) {
-        const balance = await balanceOf();
-        setTvl(balance);
+      const balance = await balanceOf();
+      setTvl(balance);
 
-        const HF: any = await healthFactor();
-        setHealtFactor(HF);
+      const HF: any = await healthFactor();
+      setHealtFactor(HF);
 
-        const { shares, supply } = await setShares();
-        setSharesValue(shares);
+      const { shares, supply } = await setShares();
+      setSharesValue(shares);
 
-        setSupply(supply);
+      setSupply(supply);
 
-        const currentLev: any = await currentLeverage();
-        setLeverage(currentLev);
-      }
+      const currentLev: any = await currentLeverage();
+      setLeverage(currentLev);
     };
 
-    getData();
-  }, [provider]);
+    if (chain_id in networks && provider) getData();
+  }, [provider, chain_id]);
 
+  // Chakra colors
   const cardBg = useColorModeValue("gray.200", "gray.800");
   const cardBg2 = useColorModeValue("gray.300", "gray.700");
   const buttonBg = useColorModeValue(
@@ -122,12 +122,15 @@ const Strategy = () => {
                   </Badge>
                 </Flex>
               </Box>
-              <Heading mt={2} fontSize="5xl" fontWeight="700" color="gray.100">
+              <Heading
+                mt={2}
+                mb="2.35rem"
+                fontSize="5xl"
+                fontWeight="700"
+                color="gray.100"
+              >
                 {strat.name}
               </Heading>
-              <Text mt={3} fontSize="lg" opacity={0.8}>
-                {strat.longDesc}
-              </Text>
 
               <Flex mt={6} gap="1rem">
                 <Box
@@ -343,11 +346,7 @@ const Strategy = () => {
 
           <Box mt={4} bgColor={cardBg} rounded="lg" p={4}>
             <Heading fontSize="2xl">About this strategy</Heading>
-            <Text my={2}>
-              This strategy leverages the vault denomination assets with
-              Gearbox. Liquidity is employed in Yearn vaults to earn extra
-              yield.
-            </Text>
+            <Text my={2}>{strat.longDesc}</Text>
           </Box>
         </Box>
       )}

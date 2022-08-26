@@ -7,7 +7,7 @@ export default function indexPage() {
   return (
     <Layout>
       <Heading fontSize="3xl" textAlign="center">
-        Leverage made simple
+        DeFi Leverage made simple
       </Heading>
 
       <Box

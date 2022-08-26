@@ -30,7 +30,7 @@ const strategies = [
     leverage: 1.5,
     apy: 60,
     tvl: 730,
-    imgSrc: "https://www.cryptofonts.com/img/icons/options.svg",
+    imgSrc: "https://www.cryptofonts.com/img/icons/eth.svg",
   },
   {
     id: 3,

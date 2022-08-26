@@ -12,7 +12,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-interface IStrategy {
+interface IProps {
   id: number;
   imgSrc: string;
   name: string;
@@ -21,14 +21,9 @@ interface IStrategy {
   tvl: number;
 }
 
-export default function StragegyCard({
-  id,
-  imgSrc,
-  name,
-  desc,
-  apy,
-  tvl,
-}: IStrategy) {
+export default function StragegyCard(props: IProps) {
+  const { id, imgSrc, name, desc, apy, tvl } = props;
+
   return (
     <Center>
       <Box
